@@ -1,14 +1,14 @@
-# explorador_tabla.py
-
 import streamlit as st
 import pandas as pd
 from db_connection import consultar_ventas
 
-def explorar_tabla(nombre_tabla="[Prestaciones_Temporal]", cantidad=1000):
+def explorar_tabla(cantidad=1000):
     """
     Consulta una tabla SQL Server y muestra estructura y preview de campos.
     """
+    nombre_tabla = "dbo.Prestaciones_Temporal"
     st.subheader("🧪 Explorador de Tabla SQL – Análisis de Campos")
+    st.info(f"🧪 Consultando tabla: {nombre_tabla}")  # Se puede quitar luego
 
     try:
         df = consultar_ventas(nombre_tabla, cantidad)
