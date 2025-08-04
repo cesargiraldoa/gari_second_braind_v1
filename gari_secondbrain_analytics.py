@@ -10,34 +10,43 @@ from sklearn.pipeline import Pipeline
 import plotly.express as px
 import streamlit as st
 
+# 🔁 Usa la función de conexión segura a SQL desde tu módulo actual
+from db_connection import consultar_ventas  # Asegúrate que existe y se importa correctamente
+
 def calcular_edad(fecha):
+    if pd.isnull(fecha):
+        return None
     return (datetime.now().date() - fecha.date()).days // 365
 
-def cargar_datos():
-    # Reemplaza esto con la conexión real a SQL Server
-    # Aquí va una carga simulada de ejemplo:
-    data = {
-        'FechaNacimiento': ['1980-05-20', '2000-01-15', '1995-07-30', '1975-03-10', '1988-11-22', '2002-09-01'],
-        'Valor_Prestacion': [150000, 320000, 47000, 141000, 42100, 250000],
-        'Sucursal_Ppto': ['ROMA', 'KENNEDY', 'ROMA', 'SUBA', 'SUBA', 'KENNEDY'],
-        'Especialidad': ['ODONTOLOGÍA GENERAL', 'ORTODONCIA', 'ORTODONCIA', 'REHABILITACIÓN', 'ORTODONCIA', 'ORTODONCIA'],
-        'Prestacion': ['Ortodoncia', 'Ortodoncia', 'Limpieza Dental', 'Endodoncia', 'Limpieza Dental', 'Ortodoncia']
-    }
-    df = pd.DataFrame(data)
-    df['FechaNacimiento'] = pd.to_datetime(df['FechaNacimiento'], errors='coerce')
-    df['Edad'] = df['FechaNacimiento'].apply(calcular_edad)
-    return df
+def cargar_datos_reales():
+    try:
+        df = consultar_ventas("[Prestaciones_Temporal]", 10000)
+        df['FechaNacimiento'] = pd.to_datetime(df['FechaNacimiento'], errors='coerce')
+        df['Edad'] = df['FechaNacimiento'].apply(calcular_edad)
+        return df
+    except Exception as e:
+        st.error(f"⚠️ Error al cargar datos desde SQL Server: {e}")
+        return pd.DataFrame()
 
 def clustering_prestaciones(df):
     st.subheader("🔍 Clustering de pacientes (Edad + Valor + Categóricos)")
 
-    features = ['Edad', 'Valor_Prestacion', 'Sucursal_Ppto', 'Especialidad']
-    numeric_features = ['Edad', 'Valor_Prestacion']
-    categorical_features = ['Sucursal_Ppto', 'Especialidad']
+    if df.empty:
+        st.warning("No hay datos disponibles para clustering.")
+        return
+
+    # Validación de columnas necesarias
+    columnas = ['Edad', 'Valor_Prestacion', 'Sucursal_Ppto', 'Especialidad']
+    if not all(col in df.columns for col in columnas):
+        st.warning("Faltan columnas necesarias para clustering.")
+        return
+
+    df_filtrado = df.dropna(subset=columnas)
+    features = columnas
 
     preprocessor = ColumnTransformer(transformers=[
-        ('num', StandardScaler(), numeric_features),
-        ('cat', OneHotEncoder(), categorical_features)
+        ('num', StandardScaler(), ['Edad', 'Valor_Prestacion']),
+        ('cat', OneHotEncoder(), ['Sucursal_Ppto', 'Especialidad'])
     ])
 
     pipeline = Pipeline(steps=[
@@ -46,19 +55,23 @@ def clustering_prestaciones(df):
         ('kmeans', KMeans(n_clusters=3, random_state=42))
     ])
 
-    X_transformed = pipeline.fit_transform(df[features])
-    df['Cluster'] = pipeline.named_steps['kmeans'].labels_
-    df['PCA1'] = X_transformed[:, 0]
-    df['PCA2'] = X_transformed[:, 1]
+    X_transformed = pipeline.fit_transform(df_filtrado[features])
+    df_filtrado['Cluster'] = pipeline.named_steps['kmeans'].labels_
+    df_filtrado['PCA1'] = X_transformed[:, 0]
+    df_filtrado['PCA2'] = X_transformed[:, 1]
 
-    fig = px.scatter(df, x='PCA1', y='PCA2', color='Cluster',
+    fig = px.scatter(df_filtrado, x='PCA1', y='PCA2', color='Cluster',
                      hover_data=['Edad', 'Valor_Prestacion', 'Sucursal_Ppto', 'Especialidad'],
                      title='Clusters identificados en las prestaciones')
     st.plotly_chart(fig, use_container_width=True)
-    st.dataframe(df[['Edad', 'Valor_Prestacion', 'Sucursal_Ppto', 'Especialidad', 'Cluster']])
+    st.dataframe(df_filtrado[['Edad', 'Valor_Prestacion', 'Sucursal_Ppto', 'Especialidad', 'Cluster']])
 
 def ranking_tratamientos(df):
     st.subheader("🏆 Ranking de tratamientos por sede")
+
+    if df.empty or 'Prestacion' not in df.columns or 'Sucursal_Ppto' not in df.columns:
+        st.warning("No hay datos suficientes para el ranking.")
+        return
 
     ranking = df.groupby(['Sucursal_Ppto', 'Prestacion']).agg(
         Total_Ventas=('Valor_Prestacion', 'sum'),
@@ -75,6 +88,10 @@ def ranking_tratamientos(df):
 def edad_vs_prestacion(df):
     st.subheader("📊 Distribución de edad por prestación")
 
+    if df.empty or 'Edad' not in df.columns or 'Prestacion' not in df.columns:
+        st.warning("No hay datos para analizar edad vs prestación.")
+        return
+
     fig = px.box(df, x='Prestacion', y='Edad', points='all', title='Edad vs Prestación')
     st.plotly_chart(fig, use_container_width=True)
 
@@ -85,10 +102,12 @@ def edad_vs_prestacion(df):
     st.dataframe(resumen)
 
 def main():
-    st.title("🧠 Gari Second Brain Analytics – Versión 3")
+    st.title("🧠 Gari Second Brain Analytics – V3 (SQL LIVE)")
 
-    df = cargar_datos()
-    st.success("Datos cargados correctamente.")
+    df = cargar_datos_reales()
+
+    if not df.empty:
+        st.success("✅ Datos reales cargados exitosamente desde SQL Server.")
 
     clustering_prestaciones(df)
     ranking_tratamientos(df)
