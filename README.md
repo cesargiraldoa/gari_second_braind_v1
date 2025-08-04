@@ -1,0 +1,3 @@
+# GariMind Core - Producción
+
+Este es el backend de producción de GariMind...

@@ -1,0 +1,22 @@
+fastapi
+uvicorn[standard]
+openai>=1.2.0
+requests
+python-dotenv
+supabase
+streamlit
+python-docx
+PyMuPDF
+openpyxl
+pymssql
+pandas
+matplotlib
+seaborn
+pyodbc
+plotly
+
+
+
+# para Google Calendar
+google-api-python-client
+google-auth

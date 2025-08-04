@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: gari-core-production
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DB_HOST
+        value: sql8020.site4now.net
+      - key: DB_NAME
+        value: db_a91131_test
+      - key: DB_USER
+        value: db_a91131_test_admin
+      - key: DB_PASSWORD
+        value: dEVOPS2022
