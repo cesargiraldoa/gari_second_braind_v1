@@ -18,5 +18,4 @@ if menu == "🔍 Gari Analytics":
     analytics_main()
 
 elif menu == "🧪 Explorador SQL":
-    explorar_tabla(nombre_tabla="dbo.Prestaciones_Temporal", cantidad=1000)
-
+    explorar_tabla(cantidad=1000)  # ✅ Sin nombre de tabla manual, ya está fijado en el módulo
