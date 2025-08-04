@@ -31,3 +31,11 @@ def ejecutar_sql(query):
     except Exception as e:
         print(f"❌ Error al ejecutar la consulta SQL: {e}")
         return pd.DataFrame()
+
+def consultar_ventas(nombre_tabla="[Prestaciones_Temporal]", cantidad=10000):
+    """
+    Ejecuta una consulta SELECT TOP N desde la tabla especificada.
+    """
+    query = f"SELECT TOP {cantidad} * FROM {nombre_tabla}"
+    return ejecutar_sql(query)
+
