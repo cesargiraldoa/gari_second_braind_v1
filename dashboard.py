@@ -18,4 +18,5 @@ if menu == "🔍 Gari Analytics":
     analytics_main()
 
 elif menu == "🧪 Explorador SQL":
-    explorar_tabla(nombre_tabla="[Prestaciones_Temporal]", cantidad=1000)
+    explorar_tabla(nombre_tabla="dbo.Prestaciones_Temporal", cantidad=1000)
+
