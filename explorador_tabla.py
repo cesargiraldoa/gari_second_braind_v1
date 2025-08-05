@@ -3,9 +3,9 @@ import pandas as pd
 from db_connection import ejecutar_sql
 
 def explorar_tabla():
-    st.markdown("## 🧪 Explorador de Tabla SQL – 🚨 NUEVO CÓDIGO EN EJECUCIÓN")
+    st.markdown("## 🧪 Explorador de Tabla SQL – 🚨 NUEVO CÓDIGO EN EJECUCIÓN 🚨")
 
-    # Campo de texto editable con nombre completo de la tabla
+    # Campo editable que sí aparece en la interfaz
     nombre_tabla = st.text_input(
         "🔢 Nombre de la tabla:",
         "[db_a91131_test].[dbo].[Prestaciones_Temporal]"
@@ -15,7 +15,7 @@ def explorar_tabla():
 
     if st.button("📥 Consultar ventas"):
         query = f"SELECT TOP {cantidad} * FROM {nombre_tabla}"
-        st.code(query)  # Mostrar consulta generada en pantalla
+        st.code(query)  # ✅ Mostrar la consulta generada en pantalla
 
         try:
             df = ejecutar_sql(query)
