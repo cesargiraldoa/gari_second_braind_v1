@@ -6,7 +6,7 @@ st.set_page_config(page_title="Gari Second Brain Analytics", layout="wide")
 
 st.title("🧠 Gari Second Brain – Analytics Visual")
 
-# Menú lateral para navegación
+# Menú lateral
 menu = st.sidebar.radio("Selecciona módulo", [
     "🔍 Gari Analytics",
     "🧪 Explorador SQL"
@@ -16,4 +16,4 @@ if menu == "🔍 Gari Analytics":
     analytics_main()
 
 elif menu == "🧪 Explorador SQL":
-    explorar_tabla()  # ✅ sin nombre de tabla fijo, ahora editable
+    explorar_tabla()  # ✅ NO pasar nombre_tabla
