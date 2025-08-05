@@ -1,5 +1,3 @@
-# dashboard.py
-
 import streamlit as st
 from gari_secondbrain_analytics import main as analytics_main
 from explorador_tabla import explorar_tabla
@@ -18,4 +16,4 @@ if menu == "🔍 Gari Analytics":
     analytics_main()
 
 elif menu == "🧪 Explorador SQL":
-    explorar_tabla(cantidad=1000)  # ✅ Sin nombre de tabla manual, ya está fijado en el módulo
+    explorar_tabla()  # ✅ sin nombre de tabla fijo, ahora editable
