@@ -5,13 +5,17 @@ from db_connection import ejecutar_sql
 def explorar_tabla():
     st.markdown("## 🧪 Explorador de Tabla SQL – Análisis de Campos")
 
-    # MISMO input que en "Consulta ventas"
-    nombre_tabla = st.text_input("🔢 Nombre de la tabla:", "[Prestaciones_Temporal]")
+    # Forzamos la ruta completa a la tabla, que sí funciona en "Consulta ventas"
+    nombre_tabla = st.text_input(
+        "🔢 Nombre de la tabla:",
+        "[db_a91131_test].[dbo].[Prestaciones_Temporal]"
+    )
+
     cantidad = st.slider("📄 Número de registros a mostrar", min_value=1, max_value=1000, value=10)
 
     if st.button("📥 Consultar ventas"):
         query = f"SELECT TOP {cantidad} * FROM {nombre_tabla}"
-        st.code(query)  # 👀 Mostrar la consulta generada, útil para debug
+        st.code(query)  # 👁 Mostrar la consulta para depuración
 
         try:
             df = ejecutar_sql(query)
