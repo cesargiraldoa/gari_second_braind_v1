@@ -5,7 +5,7 @@ from db_connection import ejecutar_sql
 def explorar_tabla():
     st.markdown("## 🧪 Explorador de Tabla SQL – Análisis de Campos")
 
-    # Forzamos la ruta completa a la tabla, que sí funciona en "Consulta ventas"
+    # Campo editable con ruta completa por defecto
     nombre_tabla = st.text_input(
         "🔢 Nombre de la tabla:",
         "[db_a91131_test].[dbo].[Prestaciones_Temporal]"
@@ -15,7 +15,7 @@ def explorar_tabla():
 
     if st.button("📥 Consultar ventas"):
         query = f"SELECT TOP {cantidad} * FROM {nombre_tabla}"
-        st.code(query)  # 👁 Mostrar la consulta para depuración
+        st.code(query)  # 👁 Mostrar la query generada para verificar
 
         try:
             df = ejecutar_sql(query)
