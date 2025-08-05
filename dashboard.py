@@ -12,10 +12,10 @@ menu = st.sidebar.radio("Selecciona módulo", [
     "🧪 Explorador SQL"
 ])
 
-# Opción: Gari Analytics
+# Módulo de análisis general
 if menu == "🔍 Gari Analytics":
     analytics_main()
 
-# Opción: Explorador SQL
+# Explorador SQL con flujo editable de tabla
 elif menu == "🧪 Explorador SQL":
-    explorar_tabla()  # ✅ sin parámetros, toma input interactivo
+    explorar_tabla()
